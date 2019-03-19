@@ -12,7 +12,7 @@ def main():
 
     # Random Forest classifier
     print('Support Vector Machine: fit')
-    classifier = SVC(gamma='auto')
+    classifier = SVC(kernel='rbf', C=1.0, gamma='auto')
     classifier.fit(train_x.values, train_y.values.flatten())
 
     # Predict
