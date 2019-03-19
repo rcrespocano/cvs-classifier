@@ -14,5 +14,5 @@ CVS-Classifier is usually tested on GNU/Linux on Python 3.6.X
 
 
 ### Contact
-Rubén Crespo-Cano (rcrespocano@gmail.com)
-Ana Tauste-Francés (anataustefrances@gmail.com)
+Rubén Crespo-Cano (rcrespocano@gmail.com) and Ana Tauste-Francés (anataustefrances@gmail.com)
+
