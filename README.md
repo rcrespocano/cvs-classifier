@@ -8,8 +8,8 @@ CVS-Classifier is a project to test that ML models can predict the presence or n
 
 
 ### Usage
->> python3 -W ignore cvs/rf.py
->> python3 -W ignore cvs/svm.py
+- `python3 -W ignore cvs/rf.py`: Random Forest classifier
+- `python3 -W ignore cvs/svm.py`: Support Vector Machine classifier
 
 
 ### License
