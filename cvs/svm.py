@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import argparse
 from dataset import ds_load, ds_train_test_datasets
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
 
-def main():
+def main(verbose=False):
     # Dataset
-    ds = ds_load()
-    train_x, test_x, train_y, test_y = ds_train_test_datasets(ds, train_size=0.75)
+    ds = ds_load(verbose=verbose)
+    train_x, test_x, train_y, test_y = ds_train_test_datasets(ds, train_size=0.85, verbose=verbose)
 
     # Random Forest classifier
     print('Support Vector Machine: fit')
@@ -31,4 +32,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', default=False, action='store_true', help='Verbose.', required=False)
+    args = parser.parse_args()
+
+    main(verbose=args.verbose)

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import os
 import sys
 from dataset import ds_load, ds_train_test_datasets
@@ -9,14 +10,14 @@ from sklearn.metrics import confusion_matrix
 sys.stderr = sys.__stderr__  # unsilence stderr
 
 
-def main():
+def main(verbose=False):
     # Dataset
-    ds = ds_load()
-    train_x, test_x, train_y, test_y = ds_train_test_datasets(ds, train_size=0.75)
+    ds = ds_load(verbose=verbose)
+    train_x, test_x, train_y, test_y = ds_train_test_datasets(ds, train_size=0.85, verbose=verbose)
 
     # Random Forest classifier
     print('Random Forest: fit')
-    classifier = RandomForestClassifier(n_estimators=10000, criterion='entropy', bootstrap=True)
+    classifier = RandomForestClassifier(n_estimators=100, bootstrap=False)
     classifier.fit(train_x.values, train_y.values.flatten())
 
     # Predict
@@ -35,4 +36,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', default=False, action='store_true', help='Verbose.', required=False)
+    args = parser.parse_args()
+
+    main(verbose=args.verbose)
