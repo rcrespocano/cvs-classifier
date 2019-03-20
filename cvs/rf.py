@@ -17,7 +17,7 @@ def main(verbose=False):
 
     # Random Forest classifier
     print('Random Forest: fit')
-    classifier = RandomForestClassifier(n_estimators=100, bootstrap=False)
+    classifier = RandomForestClassifier(n_estimators=1000)
     classifier.fit(train_x.values, train_y.values.flatten())
 
     # Predict
