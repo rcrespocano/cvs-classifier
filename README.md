@@ -6,10 +6,7 @@ CVS-Classifier is a project to test that ML models can predict the presence or n
 
 
 ### Usage
-- `python3 -W ignore cvs/rf.py`: Random Forest classifier
-- `python3 -W ignore cvs/svm.py`: Support Vector Machine classifier
-- `python3 -W ignore cvs/gnb.py`: Gaussian Naive Bayes classifier
-- `python3 -W ignore cvs/abc.py`: Ada Boost classifier
+- `python3 -W ignore cvs/experiments.py --n 1 --verbose`: Run main experiments with all classifiers
 
 
 ### License
