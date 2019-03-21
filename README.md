@@ -2,7 +2,7 @@
 
 Use of the computer in the workplace is related to the development of a set of ocular and visual symptoms known as **Computer Vision Syndrome (CVS)**, which include burning, itching, dryness, photophobia, double vision and blurred vision, among other symptoms. CVS involves several mechanisms not only related to the damage of the ocular surface and the tear film, but also to the possible overload of accommodation and convergence when doing some specific tasks which normally hold high visual and cognitive demands. The probability of developing CVS increases with length of exposure, with not taking rest periods and with years of use.
 
-CVS-Classifier is a project to test that ML models can predict the presence or not of the syndrome.
+CVS-Classifier is a project to test whether ML models can predict the presence or not of the syndrome.
 
 
 ### Usage
