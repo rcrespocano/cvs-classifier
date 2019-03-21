@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import argparse
 import dataset
+import plot
 from classifiers import Classifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
+from sklearn import metrics
 
 
 def run_main_experiment(n=1, verbose=False):
@@ -13,6 +13,7 @@ def run_main_experiment(n=1, verbose=False):
     _train_accuracy = [[] for i in range(len(classifiers_ids))]
     _test_accuracy = [[] for i in range(len(classifiers_ids))]
     _conf_matrix = [[] for i in range(len(classifiers_ids))]
+    _roc = [[] for i in range(len(classifiers_ids))]
 
     # Dataset
     ds = dataset.load(verbose=_verbose_dataset)
@@ -29,15 +30,23 @@ def run_main_experiment(n=1, verbose=False):
             predictions = _classifier.predict(test_x)
 
             # Accuracy and confusion matrix
-            _train_accuracy[i].append(accuracy_score(train_y.values.flatten(), _classifier.predict(train_x)))
-            _test_accuracy[i].append(accuracy_score(test_y.values.flatten(), predictions))
-            _conf_matrix[i].append(confusion_matrix(test_y, predictions))
+            _train_accuracy[i].append(metrics.accuracy_score(train_y.values.flatten(), _classifier.predict(train_x)))
+            _test_accuracy[i].append(metrics.accuracy_score(test_y.values.flatten(), predictions))
+            _conf_matrix[i].append(metrics.confusion_matrix(test_y, predictions))
+
+            # Receiver Operating Characteristic curve
+            false_positive_rate, true_positive_rate, thresholds = metrics.roc_curve(test_y.values.flatten(), predictions)
+            roc_auc = metrics.auc(false_positive_rate, true_positive_rate)
+            _roc[i].append((false_positive_rate, true_positive_rate, thresholds, roc_auc))
 
     if verbose:
         print(classifiers_ids)
         print('Train accuracy:\n', _train_accuracy)
         print('Test accuracy:\n', _test_accuracy)
         print('Confusion matrix:\n', _conf_matrix)
+
+    # Plot ROC results
+    plot.plot_roc(_roc, classifiers_ids)
 
 
 if __name__ == "__main__":
