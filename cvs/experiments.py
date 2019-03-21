@@ -35,8 +35,8 @@ def run_main_experiment(n=1, verbose=False):
 
     if verbose:
         print(classifiers_ids)
-        print('Train accuracy:', _train_accuracy)
-        print('Test accuracy:', _test_accuracy)
+        print('Train accuracy:\n', _train_accuracy)
+        print('Test accuracy:\n', _test_accuracy)
         print('Confusion matrix:\n', _conf_matrix)
 
 
