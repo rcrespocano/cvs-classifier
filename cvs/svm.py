@@ -11,7 +11,7 @@ def main(verbose=False):
     ds = ds_load(verbose=verbose)
     train_x, test_x, train_y, test_y = ds_train_test_datasets(ds, train_size=0.85, verbose=verbose)
 
-    # Random Forest classifier
+    # Support Vector Machine (Suppport Vector) classifier
     print('Support Vector Machine: fit')
     classifier = SVC(kernel='rbf', C=1.0, gamma='auto')
     classifier.fit(train_x.values, train_y.values.flatten())
