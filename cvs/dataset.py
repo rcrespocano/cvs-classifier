@@ -7,7 +7,7 @@ DB_PATH = './data/cvs-db-20190320-export.csv'
 TARGET = 'CVS_RASCH'
 
 
-def ds_load(verbose=False):
+def load(verbose=False):
     dataset = pd.read_csv(DB_PATH, na_values=' ')
 
     # Drop duplicated values
@@ -26,7 +26,7 @@ def ds_load(verbose=False):
     return dataset
 
 
-def ds_train_test_datasets(dataset, train_size=0.80, verbose=False):
+def train_test_datasets(dataset, train_size=0.80, verbose=False):
     X = dataset.drop(TARGET, axis=1)
     y = dataset[TARGET]
 
