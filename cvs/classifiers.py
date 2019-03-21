@@ -9,6 +9,14 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 
 
+def get_name(classifier_id):
+    if classifier_id == 'random-forest': return 'Random Forest'
+    if classifier_id == 'support-vector-machine': return 'Support Vector Machine'
+    if classifier_id == 'gaussian-naive-bayes': return 'Gaussian Naive Bayes'
+    if classifier_id == 'ada-boost': return 'Ada Boost'
+    assert 0, 'Wrong classifier id: ' + classifier_id
+
+
 class Classifier(object):
     def __init__(self):
         self.name = None
