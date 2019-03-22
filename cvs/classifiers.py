@@ -41,14 +41,14 @@ class RandomForest(Classifier):
     def __init__(self):
         super(RandomForest, self).__init__()
         self.name = 'random-forest'
-        self.classifier = RandomForestClassifier(n_estimators=1000)
+        self.classifier = RandomForestClassifier()
 
 
 class SupportVectorMachine(Classifier):
     def __init__(self):
         super(SupportVectorMachine, self).__init__()
         self.name = 'support-vector-machine'
-        self.classifier = SVC(kernel='rbf', C=1.0, gamma='auto')
+        self.classifier = SVC()
 
 
 class GaussianNaiveBayes(Classifier):
