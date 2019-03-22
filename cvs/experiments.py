@@ -2,18 +2,21 @@
 import argparse
 import dataset
 import plot
-from classifiers import Classifier
+import classifiers
+import numpy as np
 from sklearn import metrics
 
 
 def run_main_experiment(n=1, verbose=False):
     _verbose_dataset = verbose
     classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
-
-    _train_accuracy = [[] for i in range(len(classifiers_ids))]
-    _test_accuracy = [[] for i in range(len(classifiers_ids))]
-    _conf_matrix = [[] for i in range(len(classifiers_ids))]
-    _roc = [[] for i in range(len(classifiers_ids))]
+    _num_class = len(classifiers_ids)
+    
+    _train_accuracy = [[] for i in range(_num_class)]
+    _test_accuracy = [[] for i in range(_num_class)]
+    _roc = [[] for i in range(_num_class)]
+    _recall = [[] for i in range(_num_class)]
+    _f1_score = [[] for i in range(_num_class)]
 
     # Dataset
     ds = dataset.load(verbose=_verbose_dataset)
@@ -25,25 +28,34 @@ def run_main_experiment(n=1, verbose=False):
         
         for i,c in enumerate(classifiers_ids):
             # Fit and predict
-            _classifier = Classifier.factory(c)
+            _classifier = classifiers.Classifier.factory(c)
             _classifier.fit(train_x, train_y.values.flatten())
             predictions = _classifier.predict(test_x)
 
             # Accuracy and confusion matrix
             _train_accuracy[i].append(metrics.accuracy_score(train_y.values.flatten(), _classifier.predict(train_x)))
             _test_accuracy[i].append(metrics.accuracy_score(test_y.values.flatten(), predictions))
-            _conf_matrix[i].append(metrics.confusion_matrix(test_y, predictions))
 
+            # Recall (sensitivity)
+            _recall[i].append(metrics.recall_score(test_y.values.flatten(), predictions))
+
+            # f1_score
+            _f1_score[i].append(metrics.recall_score(test_y.values.flatten(), predictions))
+            
             # Receiver Operating Characteristic curve
-            false_positive_rate, true_positive_rate, thresholds = metrics.roc_curve(test_y.values.flatten(), predictions)
-            roc_auc = metrics.auc(false_positive_rate, true_positive_rate)
-            _roc[i].append((false_positive_rate, true_positive_rate, thresholds, roc_auc))
+            false_pr, true_pr, thresholds = metrics.roc_curve(test_y.values.flatten(), predictions)
+            roc_auc = metrics.auc(false_pr, true_pr)
+            _roc[i].append((false_pr, true_pr, thresholds, roc_auc))
 
-    if verbose:
-        print(classifiers_ids)
-        print('Train accuracy:\n', _train_accuracy)
-        print('Test accuracy:\n', _test_accuracy)
-        print('Confusion matrix:\n', _conf_matrix)
+    # Results
+    for i,c in enumerate(classifiers_ids):
+        print('#####################')
+        print(classifiers.get_name(classifiers_ids[i]))
+        print('--')
+        print('> Train accuracy = %0.2f ± %0.2f)' % (np.mean(_train_accuracy[i]), np.std(_train_accuracy[i])))
+        print('> Test accuracy = %0.2f ± %0.2f)' % (np.mean(_test_accuracy[i]), np.std(_test_accuracy[i])))
+        print('> Recall (sensitivity) = %0.2f ± %0.2f)' % (np.mean(_recall[i]), np.std(_recall[i])))
+        print('> f1 score = %0.2f ± %0.2f)' % (np.mean(_f1_score[i]), np.std(_f1_score[i])))
 
     # Plot ROC results
     plot.plot_roc(_roc, classifiers_ids)
