@@ -3,15 +3,17 @@ import argparse
 import dataset
 import plot
 import classifiers
+import variables
 import numpy as np
 from sklearn import metrics
 
 
-def run_main_experiment(n=1, verbose=False):
+def run_main_experiment(dataset_path, n=1, verbose=False):
     _verbose_dataset = verbose
     classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
     _num_class = len(classifiers_ids)
-    
+    experiment_id = variables.EXP_N4
+
     _train_accuracy = [[] for i in range(_num_class)]
     _test_accuracy = [[] for i in range(_num_class)]
     _roc = [[] for i in range(_num_class)]
@@ -19,7 +21,7 @@ def run_main_experiment(n=1, verbose=False):
     _f1_score = [[] for i in range(_num_class)]
 
     # Dataset
-    ds = dataset.load(verbose=_verbose_dataset)
+    ds = dataset.load(dataset_path, experiment_id, verbose=_verbose_dataset)
 
     for x in range(0, n):
         # Train and test datasets
@@ -29,21 +31,21 @@ def run_main_experiment(n=1, verbose=False):
         for i,c in enumerate(classifiers_ids):
             # Fit and predict
             _classifier = classifiers.Classifier.factory(c)
-            _classifier.fit(train_x, train_y.values.flatten())
+            _classifier.fit(train_x, train_y)
             predictions = _classifier.predict(test_x)
 
             # Accuracy and confusion matrix
-            _train_accuracy[i].append(metrics.accuracy_score(train_y.values.flatten(), _classifier.predict(train_x)))
-            _test_accuracy[i].append(metrics.accuracy_score(test_y.values.flatten(), predictions))
+            _train_accuracy[i].append(metrics.accuracy_score(train_y, _classifier.predict(train_x)))
+            _test_accuracy[i].append(metrics.accuracy_score(test_y, predictions))
 
             # Recall (sensitivity)
-            _recall[i].append(metrics.recall_score(test_y.values.flatten(), predictions))
+            _recall[i].append(metrics.recall_score(test_y, predictions))
 
             # f1_score
-            _f1_score[i].append(metrics.recall_score(test_y.values.flatten(), predictions))
+            _f1_score[i].append(metrics.recall_score(test_y, predictions))
             
             # Receiver Operating Characteristic curve
-            false_pr, true_pr, thresholds = metrics.roc_curve(test_y.values.flatten(), predictions)
+            false_pr, true_pr, thresholds = metrics.roc_curve(test_y, predictions)
             roc_auc = metrics.auc(false_pr, true_pr)
             _roc[i].append((false_pr, true_pr, thresholds, roc_auc))
 
@@ -64,8 +66,9 @@ def run_main_experiment(n=1, verbose=False):
 if __name__ == "__main__":
     # Parse arguments
     parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', type=str, help='Dataset (.sav file).', required=True)
     parser.add_argument('--n', default=1, type=int, help='Number of executions.', required=False)
     parser.add_argument('--verbose', default=False, action='store_true', help='Verbose.', required=False)
     args = parser.parse_args()
 
-    run_main_experiment(n=args.n, verbose=args.verbose)
+    run_main_experiment(dataset_path=args.dataset, n=args.n, verbose=args.verbose)
