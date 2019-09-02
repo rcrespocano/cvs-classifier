@@ -6,7 +6,6 @@ import variables
 from sklearn.model_selection import train_test_split
 
 
-DB_PATH = './data/cvs-db-20190320-export.csv'
 TARGET = 'CVS_RASCH'
 
 
