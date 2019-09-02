@@ -11,13 +11,23 @@ CVS-Classifier is a project to test whether ML models can predict the presence o
 
 
 
-### License
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [LICENSE](LICENSE) for more information.
+### Requirements
+CVS-Classifier requires the following Python packages:
+
+* NumPy
+* SciPy
+* matplotlib
+* sklearn
+* savReaderWriter
 
 CVS-Classifier is usually tested on GNU/Linux on Python 3.6.X
 
 
 
+### License
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. See [LICENSE](LICENSE) for more information.
+
+
+
 ### Contact
 Rubén Crespo-Cano (rcrespocano@gmail.com) and Ana Tauste-Francés (anataustefrances@gmail.com)
-
