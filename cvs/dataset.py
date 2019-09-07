@@ -11,7 +11,7 @@ TARGET = 'CVS_RASCH'
 
 def load(dataset_path, experiment_id=variables.EXP_N1, verbose=False):
     dataset = convert_sav_to_dataframe(dataset_path)
-    dataset = pd.DataFrame(dataset, columns=variables.EXP_N1)
+    dataset = pd.DataFrame(dataset, columns=experiment_id)
 
     if verbose:
         print(dataset.head())
@@ -31,7 +31,7 @@ def train_test_datasets(dataset, train_size=0.80, verbose=False):
         print('Test_x Shape:', test_x.shape)
         print('Test_y Shape:', test_y.shape)
 
-    return np.array(train_x), np.array(test_x), np.array(train_y, dtype=int), np.array(test_y, dtype=int)
+    return np.array(train_x, dtype=int), np.array(test_x, dtype=int), np.array(train_y, dtype=int), np.array(test_y, dtype=int)
 
 
 def convert_sav_to_dataframe(dataset_path):
