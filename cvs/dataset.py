@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 TARGET = 'CVS_RASCH'
 
 
-def load(dataset_path, experiment_id=variables.EXP_N1, verbose=False):
+def load(dataset_path, experiment_id=variables.EXP_N01, verbose=False):
     dataset = convert_sav_to_dataframe(dataset_path)
     dataset = pd.DataFrame(dataset, columns=experiment_id)
 
