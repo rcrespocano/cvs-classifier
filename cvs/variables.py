@@ -62,3 +62,20 @@ EXP_N10 = ['CVS_RASCH', 'Z_USO_LC', 'Z_EDAD', 'Z_SEXO', 'Z_FUMA', 'Z_3PROCEDE', 
 'cat_forialejos', 'cat_foriacerca', 'cat_ppcruptura', 'cat_ppcrecobro', 'cat_AVE', 'cat_blefaritisOD', 'cat_blefaritisOI',
 'Modo_compensacion_OR', 'Reemplazo_3categoriasOR', 'cat_hiperbulbar_worse', 'cat_hiperlimb_worse', 'cat_hipertarsal_worse',
 'cat_papilas_worse', 'cat_tinciones_worse', 'cat_Rupt_worse', 'cat_Schirmer_worse']
+
+
+def get_experiment_variables_id(experiment):
+    switcher = {
+    'N01': EXP_N01,
+    'N02': EXP_N02,
+    'N03': EXP_N03,
+    'N04': EXP_N04,
+    'N05': EXP_N05,
+    'N06': EXP_N06,
+    'N07': EXP_N07,
+    'N08': EXP_N08,
+    'N09': EXP_N09,
+    'N10': EXP_N10,
+    }
+
+    return switcher.get(experiment, 'Invalid experiment ID.')

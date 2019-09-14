@@ -8,11 +8,10 @@ import numpy as np
 from sklearn import metrics
 
 
-def run_main_experiment(dataset_path, n=1, verbose=False):
+def run_main_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
     _verbose_dataset = verbose
     classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
     _num_class = len(classifiers_ids)
-    experiment_id = variables.EXP_N01
 
     _train_accuracy = [[] for i in range(_num_class)]
     _test_accuracy = [[] for i in range(_num_class)]
@@ -72,7 +71,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, help='Dataset (.sav file).', required=True)
     parser.add_argument('--n', default=1, type=int, help='Number of executions.', required=False)
+    parser.add_argument('--experiment', type=str, help='Experiment ID [N01, N02, ..., N10].', required=True)
     parser.add_argument('--verbose', default=False, action='store_true', help='Verbose.', required=False)
     args = parser.parse_args()
 
-    run_main_experiment(dataset_path=args.dataset, n=args.n, verbose=args.verbose)
+    print('Experiment ID: ' + args.experiment)
+    exp_id = variables.get_experiment_variables_id(args.experiment)
+
+    # Run main experiment
+    run_main_experiment(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
