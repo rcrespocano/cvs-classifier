@@ -12,11 +12,12 @@ def run_main_experiment(dataset_path, n=1, verbose=False):
     _verbose_dataset = verbose
     classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
     _num_class = len(classifiers_ids)
-    experiment_id = variables.EXP_N4
+    experiment_id = variables.EXP_N01
 
     _train_accuracy = [[] for i in range(_num_class)]
     _test_accuracy = [[] for i in range(_num_class)]
     _roc = [[] for i in range(_num_class)]
+    _auc = [[] for i in range(_num_class)]
     _recall = [[] for i in range(_num_class)]
     _f1_score = [[] for i in range(_num_class)]
 
@@ -25,7 +26,7 @@ def run_main_experiment(dataset_path, n=1, verbose=False):
 
     for x in range(0, n):
         # Train and test datasets
-        train_x, test_x, train_y, test_y = dataset.train_test_datasets(ds, train_size=0.85, verbose=_verbose_dataset)
+        train_x, test_x, train_y, test_y = dataset.train_test_datasets(ds, train_size=0.80, verbose=_verbose_dataset)
         _verbose_dataset = False
         
         for i,c in enumerate(classifiers_ids):
@@ -48,18 +49,21 @@ def run_main_experiment(dataset_path, n=1, verbose=False):
             false_pr, true_pr, thresholds = metrics.roc_curve(test_y, predictions)
             roc_auc = metrics.auc(false_pr, true_pr)
             _roc[i].append((false_pr, true_pr, thresholds, roc_auc))
+            _auc[i].append(roc_auc)
 
     # Results
     for i,c in enumerate(classifiers_ids):
         print('#####################')
         print(classifiers.get_name(classifiers_ids[i]))
         print('--')
-        print('> Train accuracy = %0.2f ± %0.2f)' % (np.mean(_train_accuracy[i]), np.std(_train_accuracy[i])))
-        print('> Test accuracy = %0.2f ± %0.2f)' % (np.mean(_test_accuracy[i]), np.std(_test_accuracy[i])))
+        print('> Train accuracy = %0.2f ± %0.2f [max: %0.2f])' % (np.mean(_train_accuracy[i]), np.std(_train_accuracy[i]), np.max(_train_accuracy[i])))
+        print('> Test accuracy = %0.2f ± %0.2f [max: %0.2f])' % (np.mean(_test_accuracy[i]), np.std(_test_accuracy[i]), np.max(_test_accuracy[i])))
         print('> Recall (sensitivity) = %0.2f ± %0.2f)' % (np.mean(_recall[i]), np.std(_recall[i])))
         print('> f1 score = %0.2f ± %0.2f)' % (np.mean(_f1_score[i]), np.std(_f1_score[i])))
+        print('> AUC = ' + str(np.mean(_auc[i])))
 
     # Plot ROC results
+    print('- Plot ROC results.')
     plot.plot_roc(_roc, classifiers_ids)
 
 
