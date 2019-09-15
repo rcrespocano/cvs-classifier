@@ -165,10 +165,19 @@ if __name__ == "__main__":
     parser.add_argument('--n', default=1, type=int, help='Number of executions.', required=False)
     parser.add_argument('--experiment', type=str, help='Experiment ID [N01, N02, ..., N10].', required=True)
     parser.add_argument('--verbose', default=False, action='store_true', help='Verbose.', required=False)
+    parser.add_argument('--classifier', type=str, help='Classifier [rf, svm, all].', required=False)
     args = parser.parse_args()
 
-    print('Experiment ID: ' + args.experiment)
+    print('- Experiment ID: ' + args.experiment)
     exp_id = variables.get_experiment_variables_id(args.experiment)
 
-    # Run default experiment
-    run_experiment_rf(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
+    # Run experiment
+    try:
+        if args.classifier == 'rf':
+            run_experiment_rf(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
+        elif args.classifier == 'svm':
+            run_experiment_svm(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
+        else:
+            run_default_experiment(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
+    except Exception as exc:
+        run_default_experiment(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
