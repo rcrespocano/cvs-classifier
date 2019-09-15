@@ -89,22 +89,6 @@ def run_experiment_rf(dataset_path, n=1, experiment_id=variables.EXP_N01, verbos
         # Build a classifier
         _classifier = classifiers.Classifier.factory('random-forest')
 
-        # Specify parameters and distributions to sample from
-        param_dist = {'max_depth': [3, None],
-                      'max_features': sp_randint(1, 11),
-                      'min_samples_split': sp_randint(2, 11),
-                      'bootstrap': [True, False],
-                      'criterion': ['gini', 'entropy']}
-
-        # Run randomized search
-        n_iter_search = 1000
-        random_search = RandomizedSearchCV(_classifier.get_base_classifier(), param_distributions=param_dist, 
-                                           n_iter=n_iter_search, cv=5, iid=False)
-        start = time()
-        random_search.fit(train_x, train_y)
-        print('RandomizedSearchCV took %.2f seconds for %d candidates parameter settings.' % ((time() - start), n_iter_search))
-        _report(random_search.cv_results_, n_top=1)
-
         # Use a full grid over all parameters
         param_grid = {'max_depth': [3, None],
                       'max_features': [1, 3, 5, 10, 12],
@@ -116,12 +100,49 @@ def run_experiment_rf(dataset_path, n=1, experiment_id=variables.EXP_N01, verbos
         grid_search = GridSearchCV(_classifier.get_base_classifier(), param_grid=param_grid, cv=5, iid=False)
         start = time()
         grid_search.fit(train_x, train_y)
-        print('GridSearchCV took %.2f seconds for %d candidate parameter settings.' % (time() - start, len(grid_search.cv_results_['params'])))
-        _report(grid_search.cv_results_, n_top=1)
+
+        if verbose:
+            print('GridSearchCV took %.2f seconds for %d candidate parameter settings.' % (time() - start, len(grid_search.cv_results_['params'])))
+            _report(grid_search.cv_results_, n_top=3)
+
+        # Predict with best model
+        grid_predictions = grid_search.predict(test_x)
+        print(metrics.classification_report(test_y, grid_predictions))
 
 
 def run_experiment_svm(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
-    pass
+    print('RUN EXPERIMENT {SUPPORT VECTOR MACHINE}.')
+
+    # Dataset
+    _verbose_dataset = verbose
+    ds = dataset.load(dataset_path, experiment_id, verbose=_verbose_dataset)
+
+    # Repetition of the stochastic experiment N times
+    for x in range(0, n):
+        # Train and test datasets
+        train_x, test_x, train_y, test_y = dataset.train_test_datasets(ds, train_size=0.80, verbose=_verbose_dataset)
+        _verbose_dataset = False
+
+        # Build a classifier
+        _classifier = classifiers.Classifier.factory('support-vector-machine')
+
+        # Specify parameters and distributions to sample from
+        param_dist = [{'kernel': ['rbf'], 'gamma': [1e-2, 1e-3, 1e-4, 1e-5], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]},
+                      {'kernel': ['sigmoid'], 'gamma': [1e-2, 1e-3, 1e-4, 1e-5], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]},
+                      {'kernel': ['linear'], 'C': [0.001, 0.10, 0.1, 10, 25, 50, 100, 1000]}]
+
+        # Run grid search
+        grid_search = GridSearchCV(_classifier.get_base_classifier(), param_grid=param_dist, cv=5, iid=False)
+        start = time()
+        grid_search.fit(train_x, train_y)
+
+        if verbose:
+            print('GridSearchCV took %.2f seconds for %d candidate parameter settings.' % (time() - start, len(grid_search.cv_results_['params'])))
+            _report(grid_search.cv_results_, n_top=3)
+
+        # Predict with best model
+        grid_predictions = grid_search.predict(test_x)
+        print(metrics.classification_report(test_y, grid_predictions))
 
 
 # Utility function to report best scores
