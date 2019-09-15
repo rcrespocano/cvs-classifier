@@ -36,12 +36,15 @@ class Classifier(object):
     def predict(self, X):
         return self.classifier.predict(X)
 
+    def get_base_classifier(self):
+        return self.classifier
+
 
 class RandomForest(Classifier):
     def __init__(self):
         super(RandomForest, self).__init__()
         self.name = 'random-forest'
-        self.classifier = RandomForestClassifier()
+        self.classifier = RandomForestClassifier(n_estimators=100)
 
 
 class SupportVectorMachine(Classifier):

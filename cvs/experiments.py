@@ -6,9 +6,15 @@ import classifiers
 import variables
 import numpy as np
 from sklearn import metrics
+from time import time
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint as sp_randint
 
 
-def run_main_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
+def run_default_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
+    print('RUN DEFAULT EXPERIMENT.')
+
     _verbose_dataset = verbose
     classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
     _num_class = len(classifiers_ids)
@@ -23,6 +29,7 @@ def run_main_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, verb
     # Dataset
     ds = dataset.load(dataset_path, experiment_id, verbose=_verbose_dataset)
 
+    # Repetition of the stochastic experiment N times
     for x in range(0, n):
         # Train and test datasets
         train_x, test_x, train_y, test_y = dataset.train_test_datasets(ds, train_size=0.80, verbose=_verbose_dataset)
@@ -66,6 +73,70 @@ def run_main_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, verb
     plot.plot_roc(_roc, classifiers_ids)
 
 
+def run_experiment_rf(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
+    print('RUN EXPERIMENT {RANDOM FOREST}.')
+
+    # Dataset
+    _verbose_dataset = verbose
+    ds = dataset.load(dataset_path, experiment_id, verbose=_verbose_dataset)
+
+    # Repetition of the stochastic experiment N times
+    for x in range(0, n):
+        # Train and test datasets
+        train_x, test_x, train_y, test_y = dataset.train_test_datasets(ds, train_size=0.80, verbose=_verbose_dataset)
+        _verbose_dataset = False
+
+        # Build a classifier
+        _classifier = classifiers.Classifier.factory('random-forest')
+
+        # Specify parameters and distributions to sample from
+        param_dist = {'max_depth': [3, None],
+                      'max_features': sp_randint(1, 11),
+                      'min_samples_split': sp_randint(2, 11),
+                      'bootstrap': [True, False],
+                      'criterion': ['gini', 'entropy']}
+
+        # Run randomized search
+        n_iter_search = 1000
+        random_search = RandomizedSearchCV(_classifier.get_base_classifier(), param_distributions=param_dist, 
+                                           n_iter=n_iter_search, cv=5, iid=False)
+        start = time()
+        random_search.fit(train_x, train_y)
+        print('RandomizedSearchCV took %.2f seconds for %d candidates parameter settings.' % ((time() - start), n_iter_search))
+        _report(random_search.cv_results_, n_top=1)
+
+        # Use a full grid over all parameters
+        param_grid = {'max_depth': [3, None],
+                      'max_features': [1, 3, 5, 10, 12],
+                      'min_samples_split': [2, 3, 7, 10, 12],
+                      'bootstrap': [True, False],
+                      'criterion': ['gini', 'entropy']}
+
+        # Run grid search
+        grid_search = GridSearchCV(_classifier.get_base_classifier(), param_grid=param_grid, cv=5, iid=False)
+        start = time()
+        grid_search.fit(train_x, train_y)
+        print('GridSearchCV took %.2f seconds for %d candidate parameter settings.' % (time() - start, len(grid_search.cv_results_['params'])))
+        _report(grid_search.cv_results_, n_top=1)
+
+
+def run_experiment_svm(dataset_path, n=1, experiment_id=variables.EXP_N01, verbose=False):
+    pass
+
+
+# Utility function to report best scores
+def _report(results, n_top=3):
+    for i in range(1, n_top + 1):
+        candidates = np.flatnonzero(results['rank_test_score'] == i)
+        for candidate in candidates:
+            print('Model with rank: {0}'.format(i))
+            print('Mean validation score: {0:.3f} (std: {1:.3f})'.format(
+                  results['mean_test_score'][candidate],
+                  results['std_test_score'][candidate]))
+            print('Parameters: {0}'.format(results['params'][candidate]))
+            print('')
+
+
 if __name__ == "__main__":
     # Parse arguments
     parser = argparse.ArgumentParser()
@@ -78,5 +149,5 @@ if __name__ == "__main__":
     print('Experiment ID: ' + args.experiment)
     exp_id = variables.get_experiment_variables_id(args.experiment)
 
-    # Run main experiment
-    run_main_experiment(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
+    # Run default experiment
+    run_experiment_rf(dataset_path=args.dataset, n=args.n, experiment_id=exp_id, verbose=args.verbose)
