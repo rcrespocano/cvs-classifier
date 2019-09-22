@@ -10,10 +10,10 @@ def plot_roc(roc_data, classifiers_ids):
 
         _rowCols = '22'
         if (len(classifiers_ids) == 2):
-            _rowCols = '21'
+            _rowCols = '12'
 
         plt.subplot(int(_rowCols + str(i+1)))
-        plt.title('Receiver Operating Characteristic - ' + _name)
+        plt.title(_name)
         
         for executions in x:
             plt.plot(executions[0], executions[1], alpha=0.10, color='gray')
