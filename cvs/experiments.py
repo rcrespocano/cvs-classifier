@@ -16,7 +16,7 @@ def run_default_experiment(dataset_path, n=1, experiment_id=variables.EXP_N01, v
     print('RUN DEFAULT EXPERIMENT.')
 
     _verbose_dataset = verbose
-    classifiers_ids = ['random-forest', 'support-vector-machine', 'gaussian-naive-bayes', 'ada-boost']
+    classifiers_ids = ['random-forest', 'support-vector-machine']
     _num_class = len(classifiers_ids)
 
     _train_accuracy = [[] for i in range(_num_class)]
