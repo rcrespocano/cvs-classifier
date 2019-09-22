@@ -7,6 +7,7 @@ sys.stderr = sys.__stderr__
 from sklearn.svm import SVC
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
+from deprecated import deprecated
 
 
 def get_name(classifier_id):
@@ -36,12 +37,15 @@ class Classifier(object):
     def predict(self, X):
         return self.classifier.predict(X)
 
+    def get_base_classifier(self):
+        return self.classifier
+
 
 class RandomForest(Classifier):
     def __init__(self):
         super(RandomForest, self).__init__()
         self.name = 'random-forest'
-        self.classifier = RandomForestClassifier()
+        self.classifier = RandomForestClassifier(n_estimators=100)
 
 
 class SupportVectorMachine(Classifier):
@@ -51,6 +55,7 @@ class SupportVectorMachine(Classifier):
         self.classifier = SVC()
 
 
+@deprecated
 class GaussianNaiveBayes(Classifier):
     def __init__(self):
         super(GaussianNaiveBayes, self).__init__()
@@ -58,6 +63,7 @@ class GaussianNaiveBayes(Classifier):
         self.classifier = GaussianNB()
 
 
+@deprecated
 class AdaBoost(Classifier):
     def __init__(self):
         super(AdaBoost, self).__init__()

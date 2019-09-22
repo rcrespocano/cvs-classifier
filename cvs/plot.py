@@ -7,7 +7,13 @@ import matplotlib.pyplot as plt
 def plot_roc(roc_data, classifiers_ids):
     for i, x in enumerate(roc_data):
         _name = classifiers.get_name(classifiers_ids[i])
-        plt.title('Receiver Operating Characteristic - ' + _name)
+
+        _rowCols = '22'
+        if (len(classifiers_ids) == 2):
+            _rowCols = '12'
+
+        plt.subplot(int(_rowCols + str(i+1)))
+        plt.title(_name)
         
         for executions in x:
             plt.plot(executions[0], executions[1], alpha=0.10, color='gray')
@@ -26,4 +32,5 @@ def plot_roc(roc_data, classifiers_ids):
             print(exc)
 
         plt.legend(loc='lower right')
-        plt.show()
+
+    plt.show()
