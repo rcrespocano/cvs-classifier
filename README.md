@@ -7,9 +7,9 @@ CVS-Classifier is a project to test whether ML models can predict the presence o
 
 
 ### Usage
-- `python3 -W ignore cvs/experiments.py --n 500 --dataset data/BBDD.sav --experiment N01 --classifier all`: Run default experiment with all classifiers
-- `python3 -W ignore cvs/experiments.py --dataset data/BBDD.sav --experiment N10 --classifier svm`: Run SVM experiment
-- `python3 -W ignore cvs/experiments.py --dataset data/BBDD.sav --experiment N10 --classifier rf`: Run Random Forest experiment
+- `python3 cvs/experiments.py --n 500 --dataset data/BBDD.sav --experiment N01 --classifier all`: Run default experiment with all classifiers
+- `python3 cvs/experiments.py --dataset data/BBDD.sav --experiment N10 --classifier svm`: Run SVM experiment
+- `python3 cvs/experiments.py --dataset data/BBDD.sav --experiment N10 --classifier rf`: Run Random Forest experiment
 
 
 
